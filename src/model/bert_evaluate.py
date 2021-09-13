@@ -1,6 +1,6 @@
 import pandas as pd
 import transformers
-from src.detector.bert_finetune_imdb import CustomDataset, compute_metrics
+from src.model.bert_finetune_imdb import CustomDataset, compute_metrics
 
 if __name__ == '__main__':
     test_df = pd.read_csv('../../data/aclImdb/imdb_test.csv')
