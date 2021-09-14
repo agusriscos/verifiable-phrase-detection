@@ -1,7 +1,5 @@
 import os
 import glob
-import traceback
-
 import pandas as pd
 from tensorboard.backend.event_processing.event_accumulator import EventAccumulator
 

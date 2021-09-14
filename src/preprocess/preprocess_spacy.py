@@ -17,35 +17,53 @@ def load_processing_pipeline(processing_pipeline_name="es_core_news_sm", disable
 
 
 def tokenize(pipeline, text, with_punctuation=True):
-    # Only tokenization with/without punctuation removal
+    """
+    Simple tokenization for word count analysis
+    """
     claim_doc = pipeline(text)
     if with_punctuation:
-        token_list = [token.text.lower() for token in claim_doc]
+        token_list = [token.text for token in claim_doc]
     else:
-        token_list = [token.text.lower() for token in claim_doc if not token.is_punct]
+        token_list = [token.text for token in claim_doc if not token.is_punct]
     return token_list
 
 
-def normalize(pipeline, text):
-    # Tokenization and lemmatization removing stop_words and punctuation (for descriptive analysis)
+def filter_significant_words(pipeline, text):
+    """
+    Function to filter significant words with custom rules:
+        - With numerical words and pronouns in order to detect quantities and claims based on personal experience.
+        - Without stop words (including CCONJ words and punctuation).
+    """
     claim_doc = pipeline(text)
-    # A token is significative if it is not a punctuation neither a stopword and it is not a number
-    return [token.lemma_ for token in claim_doc if (not token.is_punct | token.is_stop)]
+    token_list = []
+    for token in claim_doc:
+        if str(token.pos_) in ["NUM", "PRON"]:
+            token_list.append(token.lemma_.lower())
+        elif (not token.is_punct | token.is_stop) and (str(token.pos_) != "CCONJ"):
+            token_list.append(token.lemma_.lower())
+        else:
+            pass
+    return token_list
+
+
+def normalize(pipeline, text, with_stopwords=False):
+    """
+    Normalize text (tokenization -> punctuation (always) and stop words removal (optional) -> lemmatization)
+    """
+    claim_doc = pipeline(text)
+    if with_stopwords:
+        return [token.lemma_.lower() for token in claim_doc if not token.is_punct | token.is_stop]
+    else:
+        return [token.lemma_.lower() for token in claim_doc if not token.is_punct]
 
 
 if __name__ == '__main__':
-    claim_df = read_claim_data("../../data/ml_test_data.csv").sample(10)
-    claim_pipeline = load_processing_pipeline()
+    # claim_df = read_claim_data("../../data/ml_test_data.csv").sample(10)
+    claim_pipeline = load_processing_pipeline("es_dep_news_trf")
 
     # Testing the NLP pipeline
-    claim_text = "Las escuelas gratuitas están superando a las estatales en cuanto a nivel de alumnos."
+    claim_text = "El paro en España subirá un 20% en los próximos cuatro años y el PIB bajará un 5%."
     tokenized_claim = tokenize(claim_pipeline, claim_text)
-    # print(tokenized_claim)
-    normalized_claim = normalize(claim_pipeline, claim_text)
-    # print(normalized_claim)
-
-    # claim_df["num_words"] = claim_df["text"].apply(lambda x: len(tokenize(claim_pipeline, x, with_punctuation=False)))
-    # claim_df["num_unique_words"] = claim_df["text"].apply(
-    #     lambda x: len(set(normalize(claim_pipeline, x)))
-    # )
-    # print(claim_df.head())
+    print(tokenized_claim)
+    normalized_claim = filter_significant_words(claim_pipeline, claim_text)
+    print(normalized_claim)

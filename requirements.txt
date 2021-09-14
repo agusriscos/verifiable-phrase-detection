@@ -10,6 +10,7 @@ certifi==2021.5.30
 charset-normalizer==2.0.4
 clang==5.0
 click==7.1.2
+cupy-cuda112==9.4.0
 cymem==2.0.5
 datasets==1.11.0
 debugpy==1.4.3
@@ -17,6 +18,8 @@ decorator==5.1.0
 dill==0.3.4
 entrypoints==0.3
 es-core-news-sm @ https://github.com/explosion/spacy-models/releases/download/es_core_news_sm-3.1.0/es_core_news_sm-3.1.0-py3-none-any.whl
+es-dep-news-trf @ https://github.com/explosion/spacy-models/releases/download/es_dep_news_trf-3.1.0/es_dep_news_trf-3.1.0-py3-none-any.whl
+fastrlock==0.6
 filelock==3.0.12
 flatbuffers==1.12
 fsspec==2021.8.1
@@ -90,7 +93,9 @@ six==1.16.0
 sklearn==0.0
 smart-open==5.2.1
 spacy==3.1.2
+spacy-alignments==0.8.3
 spacy-legacy==3.0.8
+spacy-transformers==1.0.6
 srsly==2.4.1
 tenacity==8.0.1
 tensorboard==2.6.0
@@ -101,13 +106,13 @@ termcolor==1.1.0
 thinc==8.0.10
 threadpoolctl==2.2.0
 tokenizers==0.10.3
-torch==1.9.0
+torch==1.9.0+cu111
 torchaudio==0.9.0
-torchvision==0.10.0
+torchvision==0.10.0+cu111
 tornado==6.1
 tqdm==4.62.2
 traitlets==5.1.0
-transformers==4.10.2
+transformers==4.9.0
 typer==0.3.2
 typing-extensions==3.10.0.2
 urllib3==1.26.6
