@@ -1,6 +1,9 @@
 # Data folder
 data
 
+# Training folder
+training
+
 # IDE PyCharm
 .idea
 

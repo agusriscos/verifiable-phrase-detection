@@ -1,6 +1,8 @@
 import pandas as pd
 import spacy
 
+from spacy_wordnet.wordnet_annotator import wordnet_annotator
+
 
 def read_claim_data(src_filepath):
     out_df = pd.read_csv(src_filepath)
@@ -59,7 +61,7 @@ def normalize(pipeline, text, with_stopwords=False):
 
 if __name__ == '__main__':
     # claim_df = read_claim_data("../../data/ml_test_data.csv").sample(10)
-    claim_pipeline = load_processing_pipeline("es_dep_news_trf")
+    claim_pipeline = load_processing_pipeline("es_core_news_lg")
 
     # Testing the NLP pipeline
     claim_text = "El paro en España subirá un 20% en los próximos cuatro años y el PIB bajará un 5%."

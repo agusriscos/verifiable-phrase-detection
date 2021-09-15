@@ -1,4 +1,5 @@
 import os
+from os.path import join
 import glob
 import pandas as pd
 from tensorboard.backend.event_processing.event_accumulator import EventAccumulator
@@ -39,7 +40,7 @@ def many_tensorboard_to_pandas(event_paths):
     return all_logs
 
 
-def tensorboard_event_to_dataframe(logdir_or_logfile: str, write_pkl: bool, write_csv: bool, out_dir: str):
+def tensorboard_event_to_dataframe(dataframe_name: str, logdir_or_logfile: str, out_dir: str):
     if os.path.isdir(logdir_or_logfile):
         event_paths = glob.glob(os.path.join(logdir_or_logfile, "event*"))
     elif os.path.isfile(logdir_or_logfile):
@@ -56,26 +57,21 @@ def tensorboard_event_to_dataframe(logdir_or_logfile: str, write_pkl: bool, writ
         all_logs = many_tensorboard_to_pandas(event_paths)
 
         os.makedirs(out_dir, exist_ok=True)
-        if write_csv:
-            print("Saving to csv file")
-            out_file = os.path.join(out_dir, "training_metrics.csv")
-            print(out_file)
-            all_logs.to_csv(out_file, index=None)
-        if write_pkl:
-            print("Saving to pickle file")
-            out_file = os.path.join(out_dir, "training_metrics.pkl")
-            print(out_file)
-            all_logs.to_pickle(out_file)
+        print("Saving to csv file")
+        out_file = os.path.join(out_dir, dataframe_name)
+        print(out_file)
+        all_logs.to_csv(out_file, index=None)
     else:
         print("No event paths have been found.")
 
 
 if __name__ == "__main__":
-    log_directory_path = '/home/agusriscos/verifiable-phrase-detection/data/imdb-bert-logs/test'
-    output_directory_path = '../../data/imdb-bert-test-results/test-logs-dataframe'
-    tensorboard_event_to_dataframe(
-        logdir_or_logfile=log_directory_path,
-        write_csv=True,
-        write_pkl=False,
-        out_dir=output_directory_path
-    )
+    output_directory_path = '../../training/back-translation'
+    for df_name, log_dirpath in zip(["train-metrics.csv", "test-metrics.csv"],
+                                    [join(output_directory_path, "runs/Sep15_15-02-53_agusriscos-pc"),
+                                     join(output_directory_path, "test-logs")]):
+        tensorboard_event_to_dataframe(
+            dataframe_name=df_name,
+            logdir_or_logfile=log_dirpath,
+            out_dir=output_directory_path
+        )
