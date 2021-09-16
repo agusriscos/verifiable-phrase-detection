@@ -18,6 +18,8 @@ decorator==5.1.0
 dill==0.3.4
 en-core-web-sm @ https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.1.0/en_core_web_sm-3.1.0-py3-none-any.whl
 entrypoints==0.3
+es-core-news-lg @ https://github.com/explosion/spacy-models/releases/download/es_core_news_lg-3.1.0/es_core_news_lg-3.1.0-py3-none-any.whl
+es-core-news-md @ https://github.com/explosion/spacy-models/releases/download/es_core_news_md-3.1.0/es_core_news_md-3.1.0-py3-none-any.whl
 es-core-news-sm @ https://github.com/explosion/spacy-models/releases/download/es_core_news_sm-3.1.0/es_core_news_sm-3.1.0-py3-none-any.whl
 es-dep-news-trf @ https://github.com/explosion/spacy-models/releases/download/es_dep_news_trf-3.1.0/es_dep_news_trf-3.1.0-py3-none-any.whl
 fastrlock==0.6
@@ -100,6 +102,7 @@ spacy==3.1.2
 spacy-alignments==0.8.3
 spacy-legacy==3.0.8
 spacy-transformers==1.0.6
+spacy-wordnet @ git+https://github.com/recognai/spacy-wordnet.git@ada107749d0e195dd966a2d4afe94136cdb230ab
 srsly==2.4.1
 tenacity==8.0.1
 tensorboard==2.6.0

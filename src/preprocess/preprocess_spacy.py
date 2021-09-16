@@ -1,8 +1,6 @@
 import pandas as pd
 import spacy
 
-from spacy_wordnet.wordnet_annotator import wordnet_annotator
-
 
 def read_claim_data(src_filepath):
     out_df = pd.read_csv(src_filepath)
@@ -10,6 +8,9 @@ def read_claim_data(src_filepath):
 
 
 def load_processing_pipeline(processing_pipeline_name="es_core_news_sm", disable_list=None, exclude_list=None):
+    """
+    Load Spacy NLP pipeline
+    """
     if exclude_list is None:
         exclude_list = []
     if disable_list is None:
@@ -18,7 +19,7 @@ def load_processing_pipeline(processing_pipeline_name="es_core_news_sm", disable
     return pipeline
 
 
-def tokenize(pipeline, text, with_punctuation=True):
+def tokenize(pipeline, text, with_punctuation=False):
     """
     Simple tokenization for word count analysis
     """
@@ -45,18 +46,18 @@ def filter_significant_words(pipeline, text):
             token_list.append(token.lemma_.lower())
         else:
             pass
-    return token_list
+    return set(token_list)
 
 
 def normalize(pipeline, text, with_stopwords=False):
     """
-    Normalize text (tokenization -> punctuation (always) and stop words removal (optional) -> lemmatization)
+    Normalize text (tokenization -> punctuation (always) and stop words removal (optional))
     """
     claim_doc = pipeline(text)
     if with_stopwords:
-        return [token.lemma_.lower() for token in claim_doc if not token.is_punct | token.is_stop]
+        return [token.lower() for token in claim_doc if not token.is_punct | token.is_stop]
     else:
-        return [token.lemma_.lower() for token in claim_doc if not token.is_punct]
+        return "".join([token.lower() for token in claim_doc if not token.is_punct])
 
 
 if __name__ == '__main__':

@@ -1,12 +1,12 @@
 from os.path import join
 import pandas as pd
 
-from sklearn.model_selection import train_test_split
 from sklearn.metrics import precision_recall_fscore_support, accuracy_score
 
 import torch
 from torch.utils.data import Dataset
 import transformers
+transformers.logging.set_verbosity_error()
 
 
 class CustomDataset(Dataset):
@@ -36,25 +36,31 @@ def compute_metrics(pred):
     }
 
 
-def main():
-    data_dirpath = "/home/agusriscos/verifiable-phrase-detection/data/back-translation"
-    training_dirpath = "/home/agusriscos/verifiable-phrase-detection/training/back-translation"
-    train_df = pd.read_csv(join(data_dirpath, "prepared-backtransl-train.csv"))
-    val_df = pd.read_csv(join(data_dirpath, "prepared-backtransl-val.csv"))
+def get_hugging_datasets(train, val, model_name="dccuchile/bert-base-spanish-wwm-cased"):
+    train_texts = train["text"].values.tolist()
+    train_labels = train["claim"].values.tolist()
+    val_texts = val["text"].values.tolist()
+    val_labels = val["claim"].values.tolist()
 
-    train_texts = train_df["text"].values.tolist()
-    train_labels = train_df["claim"].values.tolist()
-    val_texts = val_df["text"].values.tolist()
-    val_labels = val_df["claim"].values.tolist()
-
-    tokenizer = transformers.AutoTokenizer.from_pretrained("dccuchile/bert-base-spanish-wwm-cased")
+    tokenizer = transformers.AutoTokenizer.from_pretrained(model_name)
     train_encodings = tokenizer(train_texts, truncation=True, padding=True)
     val_encodings = tokenizer(val_texts, truncation=True, padding=True)
 
     train_dataset = CustomDataset(train_encodings, train_labels)
     val_dataset = CustomDataset(val_encodings, val_labels)
 
-    model = transformers.AutoModelForSequenceClassification.from_pretrained("dccuchile/bert-base-spanish-wwm-uncased",
+    return train_dataset, val_dataset
+
+
+def main():
+    data_dirpath = "/home/agusriscos/verifiable-phrase-detection/data"
+    training_dirpath = "/home/agusriscos/verifiable-phrase-detection/training/bert"
+    train_df = pd.read_csv(join(data_dirpath, "prep_train.csv"))
+    val_df = pd.read_csv(join(data_dirpath, "raw_val.csv"))
+
+    train_dataset, val_dataset = get_hugging_datasets(train_df, val_df, "dccuchile/bert-base-spanish-wwm-cased")
+
+    model = transformers.AutoModelForSequenceClassification.from_pretrained("dccuchile/bert-base-spanish-wwm-cased",
                                                                             num_labels=2)
     training_args = transformers.TrainingArguments(output_dir=training_dirpath,
                                                    overwrite_output_dir=True, num_train_epochs=4, logging_steps=100,
